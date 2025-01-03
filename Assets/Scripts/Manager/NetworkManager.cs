@@ -13,7 +13,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public static NetworkManager Instance;
     public TMP_Text StatusText;
     public TMP_InputField NickNameInput;
-    public InputField RoomInputText;
+    public TMP_InputField RoomInputText;
     public GameObject RoomNameList_Txt;
     public GameObject RoomListContent;
     string RoomName;
@@ -58,7 +58,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         myList.Clear();
     }
 
-    public void CreateRoom()=> PhotonNetwork.CreateRoom(RoomInputText.text, new RoomOptions {MaxPlayers=2});
+    public void CreateRoom() {
+        PhotonNetwork.CreateRoom(RoomInputText.text);
+    }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
