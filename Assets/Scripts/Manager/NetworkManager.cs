@@ -61,45 +61,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void CreateRoom() {
         PhotonNetwork.CreateRoom(RoomInputText.text);
     }
-
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        
-        int roomCount = roomList.Count;
-        for(int i=0; i<roomCount;i++){
-            Destroy(GameObject.Find("RoomNameListBtn(Clone)"));
-        }
-        for (int i=0; i<roomCount;i++){
-            if(!roomList[i].RemovedFromList){       //if RoomOut
-                if (!myList.Contains(roomList[i])){
-                    myList.Add(roomList[i]); //if myList and roomList not the same, Add roomList[i] to myList
-                    print("방 추가 ");
-                }
-                else {
-                    myList[myList.IndexOf(roomList[i])] = roomList[i]; //To maintain the same position when the same value occurs
-                //myList.Indexof(roomList[i]) : Index return for that object
-                    print("방 정렬 " );
-                }
-            }
-            else if (myList.IndexOf(roomList[i]) != -1) {
-                myList.RemoveAt(myList.IndexOf(roomList[i]));
-                print("방삭제");
-            }
-        }
-        myListRefresh();
-    }
-    void myListRefresh(){
-        int myListCount = myList.Count;
-        for (int j = 0; j < myListCount; j++)
-        {
-            GameObject RoomNameList = Instantiate(RoomNameList_Txt);
-            RoomNameList.GetComponent<Button>().onClick.AddListener(()=>ButtonJoinRoom());
-            Text RoomBtnName = RoomNameList.GetComponentInChildren<Text>();
-            RoomBtnName.text = myList[j].Name;
-            RoomNameList.transform.SetParent(RoomListContent.transform, false);
-            print("실행 " + j);
-        }
-    }
     public void ButtonJoinRoom()
     {
         print("이름 : " + EventSystem.current.currentSelectedGameObject.GetComponentInChildren<Text>().text);
@@ -133,7 +94,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("Room");
         print("방 입장");
     }
-
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         print("message : " + message);
