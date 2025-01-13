@@ -1,32 +1,48 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class WaitingRoomManager : MonoBehaviour
+public class WaitingRoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject Content;
-    public List<NickNameControl> NickNamePrefab = new List<NickNameControl>();
+    Dictionary<Player,GameObject> nickName = new Dictionary<Player,GameObject>();
+    public GameObject NickNamePrefab;
     PhotonView pv;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
-        if (PhotonNetwork.IsMasterClient)
-        {
-            for(int i=0; i < 10; i++)
-            {
-                GameObject temp = PhotonNetwork.Instantiate("NickName", Vector3.zero, Quaternion.identity);
-                pv.RPC("SetParentNickName", RpcTarget.AllBuffered, temp);
-            }
-        }
     }
-    void Start()
+    private void Start()
     {
-        StartCoroutine(UpdateUI());
+        pv.RPC("CreateNickNameObj", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
+        //CreateNickNameObj(PhotonNetwork.LocalPlayer);
+    }
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log("들어옴 " + newPlayer.NickName);
+    }
+    [PunRPC]
+    private void CreateNickNameObj(Player newPlayer)
+    {
+        //Start에서 사용
+        GameObject temp = Instantiate(NickNamePrefab, Content.transform);
+        temp.GetComponent<TMP_Text>().text = newPlayer.NickName;
+        nickName.Add(newPlayer, temp);
     }
 
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Debug.Log("나감 " + otherPlayer.NickName);
+        Destroy(nickName[otherPlayer].gameObject);
+        Debug.Log(nickName.Count());
+        nickName.Remove(otherPlayer);
+    }
+    /*
     [PunRPC]
     private void SetParentNickName(GameObject obj)
     {
@@ -59,6 +75,6 @@ public class WaitingRoomManager : MonoBehaviour
             NickNamePrefab[i].NickNameSet(player[i].NickName);
         }
     }
-    
+    */
 
 }
