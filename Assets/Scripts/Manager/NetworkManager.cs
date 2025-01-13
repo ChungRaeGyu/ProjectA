@@ -53,6 +53,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
     public void JoinLobby()=>PhotonNetwork.JoinLobby();
     
+    
     public override void OnJoinedLobby(){   
         print("입장");
         myList.Clear();
@@ -78,7 +79,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }
     public void JoinRandomRoom(){
         PhotonNetwork.JoinRandomRoom();
-        PhotonNetwork.LoadLevel("Room");
     }
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
@@ -88,10 +88,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.JoinRoom(RoomInputText.text);
     }
-
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.LoadLevel("Room");
+        PhotonNetwork.LoadLevel("WaitingRoom");
         print("방 입장");
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
