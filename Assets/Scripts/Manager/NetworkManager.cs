@@ -29,6 +29,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Destroy(Instance);
         }
         Screen.SetResolution(1080,600, false);
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.SendRate = 60; //값을 보내는 빈도이다.
         PhotonNetwork.SerializationRate = 30; //동기화 빈도
         DontDestroyOnLoad(this);

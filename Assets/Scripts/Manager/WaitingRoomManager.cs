@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WaitingRoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject Content;
     Dictionary<Player,GameObject> nickName = new Dictionary<Player,GameObject>();
-    public GameObject NickNamePrefab;
+    [SerializeField] GameObject NickNamePrefab;
+    [SerializeField] TMP_Text roomNameTxt;
+    [SerializeField] TMP_Text playerCountTxt;
+    [SerializeField] GameObject gameStartBtn;
     PhotonView pv;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
@@ -20,11 +24,15 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         pv.RPC("CreateNickNameObj", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer);
+        roomNameTxt.text = PhotonNetwork.CurrentRoom.Name;
+        PlayerTextSet();
+
+        if(PhotonNetwork.IsMasterClient)
+        {
+            //마스터 클라이언트가 방장임
+            gameStartBtn.SetActive(true);
+        }
         //CreateNickNameObj(PhotonNetwork.LocalPlayer);
-    }
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        Debug.Log("들어옴 " + newPlayer.NickName);
     }
     [PunRPC]
     private void CreateNickNameObj(Player newPlayer)
@@ -34,6 +42,11 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
         temp.GetComponent<TMP_Text>().text = newPlayer.NickName;
         nickName.Add(newPlayer, temp);
     }
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log("들어옴 " + newPlayer.NickName);
+        PlayerTextSet();
+    }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
@@ -41,7 +54,26 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
         Destroy(nickName[otherPlayer].gameObject);
         Debug.Log(nickName.Count());
         nickName.Remove(otherPlayer);
+        PlayerTextSet();
     }
+
+    private void PlayerTextSet()
+    {
+        playerCountTxt.text = PhotonNetwork.CurrentRoom.PlayerCount.ToString() + "명";
+    }
+
+    public void GameStartBtn()
+    {
+        //게임시작버튼
+        PhotonNetwork.LoadLevel("Room");
+    }
+
+    public void ExitRoomBtn()
+    {
+        //방나가기
+        PhotonNetwork.LeaveRoom(this);
+    }
+    
     /*
     [PunRPC]
     private void SetParentNickName(GameObject obj)
