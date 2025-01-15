@@ -1,12 +1,11 @@
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.EventSystems;
 public enum Stage{
     READY,
     START,
@@ -27,7 +26,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     GameObject character;
     //Ready
     [SerializeField] Transform[] seats; //자리의 위치를 가지고 있다.
-    Dictionary<int, Player> seatNum = new Dictionary<int, Player>();
+    Dictionary<int, int> seatNum = new Dictionary<int, int>();  //자리 위치, 플레이어actnum
     [SerializeField] List<int> turnList = new List<int>();
     [SerializeField] TMP_Text test;
     private void Awake()
@@ -35,53 +34,56 @@ public class GameManager : MonoBehaviourPunCallbacks
         pv = GetComponent<PhotonView>();
         if (PhotonNetwork.IsMasterClient)
         {
+            List<int> randomList = new List<int>();
+            List<int> actNumList = new List<int>();
             foreach (Player player in PhotonNetwork.PlayerList)
             {
-                int random = RandomNum();
+                int random = RandomNum(randomList);
                 turnList.Add(random);
-                seatNum.Add(random, player);
+                randomList.Add(random);
+                actNumList.Add(player.ActorNumber);
             }
             ListSort(turnList);
-            pv.RPC("SeetTurnList", RpcTarget.AllBuffered, turnList.ToArray());
+            pv.RPC("SeatTurnList", RpcTarget.AllBuffered, turnList.ToArray(),randomList.ToArray(),actNumList.ToArray());
         }
-
     }
     void Start()
     {
         roomNameTxt.text = $"방 이름 : {PhotonNetwork.CurrentRoom.Name}";
-        //character = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity); //Resourse 풀더안에 있어야한다.
-        //pv.RPC("RandomPlacement", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer, RandomNum());
-    }
-    void Update()
-    {
-        Test();
-    }
-    private void Test()
-    {
-        string a = "";
-        foreach (var player in seatNum) {
-            a += player;
-        }
-        test.text = a;
-        a = "";
-    }
 
 
+    }
     #region Ready
     [PunRPC]
-    private void SeetTurnList(int[] tempList)
+    private void SeatTurnList(int[] tempList, int[] random, int[] actorNum)
     {
+        //Awake에 사용되는 중
         turnList = tempList.ToList();
-    }
+        for(int i=0; i<random.Length; i++)
+            seatNum.Add(random[i],actorNum[i]);
+        Seating();
 
-    private int RandomNum()
+    }
+    private void Seating()
+    {
+        character = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity); //Resourse 풀더안에 있어야한다.
+        //내일 할 일 위치 정해주기
+        int num = seatNum.FirstOrDefault(x => x.Value == PhotonNetwork.LocalPlayer.ActorNumber).Key;
+        foreach (KeyValuePair<int, int> temp in seatNum)
+        {
+            Debug.Log($"키 : {temp.Key}, Value : {temp.Value}");
+        }
+        Debug.Log(num);
+        character.transform.position = seats[num].position;
+    }
+    private int RandomNum(List<int> tempList)
     {
         int rand;
         do
         {
             rand = Random.Range(0, seats.Length);
             Debug.Log("랜덤 뽑기");
-        } while (seatNum.ContainsKey(rand));
+        } while (tempList.Contains(rand));
 
         return rand;
         //Todo: seatNum에 넣어준다. 그리고 저 정보들을 끝나고 한대 모은다?
