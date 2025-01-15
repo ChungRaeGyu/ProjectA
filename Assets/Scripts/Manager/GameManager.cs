@@ -1,10 +1,8 @@
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor.Rendering;
 using UnityEngine;
 public enum Stage{
     READY,
@@ -23,7 +21,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     //UI
     [SerializeField] TMP_Text roomNameTxt;
     //PlayerObject
-    GameObject character;
+    GameObject character; //게임오브젝트와 닉네임 관리를 위한
     //Ready
     [SerializeField] Transform[] seats; //자리의 위치를 가지고 있다.
     Dictionary<int, int> seatNum = new Dictionary<int, int>();  //자리 위치, 플레이어actnum
@@ -57,24 +55,20 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void SeatTurnList(int[] tempList, int[] random, int[] actorNum)
     {
+        Debug.Log("punRPC");
         //Awake에 사용되는 중
         turnList = tempList.ToList();
         for(int i=0; i<random.Length; i++)
             seatNum.Add(random[i],actorNum[i]);
         Seating();
-
     }
     private void Seating()
     {
-        character = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity); //Resourse 풀더안에 있어야한다.
-        //내일 할 일 위치 정해주기
+        object[] customData = new object[] { PhotonNetwork.LocalPlayer.NickName};
+        Debug.Log("Seating()");
+        GameObject tempObj = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
         int num = seatNum.FirstOrDefault(x => x.Value == PhotonNetwork.LocalPlayer.ActorNumber).Key;
-        foreach (KeyValuePair<int, int> temp in seatNum)
-        {
-            Debug.Log($"키 : {temp.Key}, Value : {temp.Value}");
-        }
-        Debug.Log(num);
-        character.transform.position = seats[num].position;
+        tempObj.transform.position = seats[num].position;
     }
     private int RandomNum(List<int> tempList)
     {
@@ -111,7 +105,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             num += i + ",";
         }
-        Debug.Log(num);
         if (tempList[b] > tempList[a])
         {
             int temp = tempList[b];

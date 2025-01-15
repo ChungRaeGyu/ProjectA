@@ -13,7 +13,13 @@ public class PlayerScript : MonoBehaviour
     }
     void Start()
     {
-        if(pv.IsMine)
-            nickName.text = PhotonNetwork.LocalPlayer.NickName;
+        Debug.Log("»ý¼º");
+        nickName.text = (string)pv.InstantiationData[0];
+        //nickName.text = PhotonNetwork.LocalPlayer.NickName;
+    }
+
+    public void NickNameSet(string name)
+    {
+        nickName.text = name;
     }
 }

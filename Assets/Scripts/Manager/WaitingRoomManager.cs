@@ -32,7 +32,6 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
             //마스터 클라이언트가 방장임
             gameStartBtn.SetActive(true);
         }
-        //CreateNickNameObj(PhotonNetwork.LocalPlayer);
     }
     [PunRPC]
     private void CreateNickNameObj(Player newPlayer)
