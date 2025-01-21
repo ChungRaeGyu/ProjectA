@@ -15,7 +15,10 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text roomNameTxt;
     [SerializeField] TMP_Text playerCountTxt;
     [SerializeField] GameObject gameStartBtn;
+    [SerializeField] GameObject guidePanel;
     PhotonView pv;
+
+    [SerializeField] RoomSettingManager roomSettingManager;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -45,6 +48,8 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("들어옴 " + newPlayer.NickName);
         PlayerTextSet();
+        if(PhotonNetwork.IsMasterClient)
+            roomSettingManager.UpdateCount(PhotonNetwork.CurrentRoom.PlayerCount);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -54,6 +59,9 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
         Debug.Log(nickName.Count());
         nickName.Remove(otherPlayer);
         PlayerTextSet();
+        if (PhotonNetwork.IsMasterClient)
+            roomSettingManager.UpdateCount(PhotonNetwork.CurrentRoom.PlayerCount);
+
     }
 
     private void PlayerTextSet()
@@ -64,48 +72,19 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
     public void GameStartBtn()
     {
         //게임시작버튼
-        PhotonNetwork.LoadLevel("Room");
+        if (roomSettingManager.JobCount())
+            PhotonNetwork.LoadLevel("Room");
+        else
+            guidePanel.SetActive(true);
     }
-
+    public void CloseGuideBtn()
+    {
+        guidePanel.SetActive(false);
+    }
     public void ExitRoomBtn()
     {
         //방나가기
         PhotonNetwork.LeaveRoom(this);
     }
-    
-    /*
-    [PunRPC]
-    private void SetParentNickName(GameObject obj)
-    {
-        //Awake에서 사용 , NickName오브젝트의 부모 지정
-        obj.transform.SetParent(Content.transform);
-        obj.SetActive(false);
-        NickNamePrefab.Add(obj.GetComponent<NickNameControl>());
-    }
-    IEnumerator UpdateUI()
-    {
-        while (true)
-        {
-            yield return new WaitForSecondsRealtime(5f);
-            UpdatePlayerList();
-        }
-    }
-
-    //아오 반복해서 쓰면 안될 것 GetComponent
-    void UpdatePlayerList()
-    {
-        foreach(NickNameControl temp in NickNamePrefab)
-        {
-            temp.gameObject.SetActive(false);
-        }
-
-        var player = PhotonNetwork.PlayerList;
-        for(int i=0; i < player.Length; i++)
-        {
-            NickNamePrefab[i].gameObject.SetActive(true);
-            NickNamePrefab[i].NickNameSet(player[i].NickName);
-        }
-    }
-    */
 
 }

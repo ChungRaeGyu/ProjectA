@@ -1,5 +1,6 @@
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -48,8 +49,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Start()
     {
         roomNameTxt.text = $"¹æ ÀÌ¸§ : {PhotonNetwork.CurrentRoom.Name}";
-
-
     }
     #region Ready
     [PunRPC]
@@ -69,6 +68,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         GameObject tempObj = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
         int num = seatNum.FirstOrDefault(x => x.Value == PhotonNetwork.LocalPlayer.ActorNumber).Key;
         tempObj.transform.position = seats[num].position;
+
+        StartCoroutine(CGameProgress());
     }
     private int RandomNum(List<int> tempList)
     {
@@ -119,4 +120,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     }
     #endregion
+
+    IEnumerator CGameProgress()
+    {
+
+        yield return null;
+    }
 }
