@@ -804,6 +804,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224622087}
   - component: {fileID: 224622088}
+  - component: {fileID: 224622089}
   m_Layer: 5
   m_Name: "\uBA40\uB9B0"
   m_TagString: Good
@@ -892,6 +893,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &224622089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 224622086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7530aeeed7abe46929e84d576c1690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camp: 1
+  eRole: 0
 --- !u!1 &235886648
 GameObject:
   m_ObjectHideFlags: 0
@@ -2867,6 +2882,7 @@ GameObject:
   m_Component:
   - component: {fileID: 608910329}
   - component: {fileID: 608910330}
+  - component: {fileID: 608910331}
   m_Layer: 5
   m_Name: "\uD37C\uC2DC\uBC8C"
   m_TagString: Good
@@ -2955,6 +2971,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &608910331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608910328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7530aeeed7abe46929e84d576c1690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camp: 1
+  eRole: 1
 --- !u!1 &618795516
 GameObject:
   m_ObjectHideFlags: 0
@@ -5209,6 +5239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1150992358}
   - component: {fileID: 1150992359}
+  - component: {fileID: 1150992360}
   m_Layer: 5
   m_Name: "\uBAA8\uB4DC\uB808\uB4DC"
   m_TagString: Evil
@@ -5297,6 +5328,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1150992360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150992357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7530aeeed7abe46929e84d576c1690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camp: 0
+  eRole: 3
 --- !u!1 &1151661443
 GameObject:
   m_ObjectHideFlags: 0
@@ -6012,6 +6057,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1335900029}
   - component: {fileID: 1335900030}
+  - component: {fileID: 1335900031}
   m_Layer: 5
   m_Name: "\uC624\uBCA0\uB860"
   m_TagString: Evil
@@ -6100,6 +6146,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1335900031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1335900028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7530aeeed7abe46929e84d576c1690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camp: 0
+  eRole: 5
 --- !u!1 &1336108475
 GameObject:
   m_ObjectHideFlags: 0
@@ -6850,12 +6910,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goodTxt: {fileID: 1661525100}
   evilTxt: {fileID: 1038192977}
-  merlin: {fileID: 224622088}
-  percival: {fileID: 608910330}
-  assassin: {fileID: 1998684913}
-  morgana: {fileID: 1727520145}
-  mordred: {fileID: 1150992359}
-  oberon: {fileID: 1335900030}
+  Job:
+  - {fileID: 224622088}
+  - {fileID: 608910330}
+  - {fileID: 1998684913}
+  - {fileID: 1150992359}
+  - {fileID: 1727520145}
+  - {fileID: 1335900030}
 --- !u!1 &1596189316
 GameObject:
   m_ObjectHideFlags: 0
@@ -7427,6 +7488,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1727520144}
   - component: {fileID: 1727520145}
+  - component: {fileID: 1727520146}
   m_Layer: 5
   m_Name: "\uBAA8\uB974\uAC00\uB098"
   m_TagString: Evil
@@ -7515,6 +7577,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &1727520146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727520143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7530aeeed7abe46929e84d576c1690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camp: 0
+  eRole: 2
 --- !u!1 &1740858630
 GameObject:
   m_ObjectHideFlags: 0
@@ -9083,6 +9159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1998684912}
   - component: {fileID: 1998684913}
+  - component: {fileID: 1998684914}
   m_Layer: 5
   m_Name: "\uC554\uC0B4\uC790"
   m_TagString: Evil
@@ -9171,6 +9248,20 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 1
+--- !u!114 &1998684914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1998684911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec7530aeeed7abe46929e84d576c1690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camp: 0
+  eRole: 4
 --- !u!1 &2083816063
 GameObject:
   m_ObjectHideFlags: 0

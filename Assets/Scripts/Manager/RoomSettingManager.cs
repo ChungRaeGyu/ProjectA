@@ -1,10 +1,22 @@
+using NUnit.Framework;
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Runtime.Serialization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+public enum ERole
+{
+    MERIN,
+    PERCIVAL,
+    MORGANA,
+    MORDRED,
+    ASSASSIN,
+    OBERON,
+    NORMAL
+}
 public class RoomSettingManager : MonoBehaviour
 {
     [SerializeField] TMP_Text goodTxt;
@@ -17,6 +29,8 @@ public class RoomSettingManager : MonoBehaviour
     int maxGood;
     int evil=1;
     int maxEvil;
+    public static int[] list;
+
     public void UpdateCount(int count)
     {
         switch (count)
@@ -94,16 +108,28 @@ public class RoomSettingManager : MonoBehaviour
     }
     public void SetJob()
     {
+
         Hashtable jobs = new Hashtable();
+        object[] tempobj= new object[2]; //이름, 진영, 
         foreach(Toggle tempToggle in Job)
         {
             if (tempToggle.isOn)
             {
-                jobs.Add(tempToggle.name, tempToggle.name);
+                Role.roleList.Add(tempToggle.GetComponent<RoleInfo>());
             }
         }
-
-        PhotonNetwork.CurrentRoom.SetCustomProperties(jobs);
+        for(int i=0; i <maxGood - good; i++)
+        {
+            RoleInfo roleInfo = new RoleInfo();
+            roleInfo.SetRole(true, ERole.NORMAL);
+            Role.roleList.Add(roleInfo);
+        }
+        for (int i = 0; i < maxEvil - evil; i++)
+        {
+            RoleInfo roleInfo = new RoleInfo();
+            roleInfo.SetRole(false, ERole.NORMAL);
+            Role.roleList.Add(roleInfo);
+        }
     }
     #region 버튼
     public void NormalUpBtn(TMP_Text text)

@@ -54,7 +54,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void SeatTurnList(int[] tempList, int[] random, int[] actorNum)
     {
-        Debug.Log("punRPC");
         //Awake에 사용되는 중
         turnList = tempList.ToList();
         for(int i=0; i<random.Length; i++)
@@ -64,11 +63,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void Seating()
     {
         object[] customData = new object[] { PhotonNetwork.LocalPlayer.NickName};
-        Debug.Log("Seating()");
         GameObject tempObj = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
         int num = seatNum.FirstOrDefault(x => x.Value == PhotonNetwork.LocalPlayer.ActorNumber).Key;
         tempObj.transform.position = seats[num].position;
-
         StartCoroutine(CGameProgress());
     }
     private int RandomNum(List<int> tempList)
@@ -90,7 +87,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Sorting(tempList, i, i-1);
         }
-        Debug.Log("TempList");
 
     }
 
@@ -123,7 +119,16 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator CGameProgress()
     {
-
+        //자기 역할 확인하기
+        CheckRole();
         yield return null;
+    }
+
+    private void CheckRole()
+    {
+        foreach(RoleInfo roleInfo in Role.roleList)
+        {
+            Debug.Log(roleInfo.eRole);
+        }
     }
 }
