@@ -109,27 +109,29 @@ public class RoomSettingManager : MonoBehaviour
     public void SetJob()
     {
 
-        Hashtable jobs = new Hashtable();
-        object[] tempobj= new object[2]; //이름, 진영, 
         foreach(Toggle tempToggle in Job)
         {
+            RoleInfo roleInfo = new RoleInfo();
             if (tempToggle.isOn)
             {
-                Role.roleList.Add(tempToggle.GetComponent<RoleInfo>());
+                bool camp = tempToggle.tag == "Good" ? true : false;
+                roleInfo.SetRole(camp, tempToggle.name); //완전복사 하는 느낌
+                Role.roleList.Add(roleInfo);
             }
         }
         for(int i=0; i <maxGood - good; i++)
         {
             RoleInfo roleInfo = new RoleInfo();
-            roleInfo.SetRole(true, ERole.NORMAL);
+            roleInfo.SetRole(true, "신하");
             Role.roleList.Add(roleInfo);
         }
         for (int i = 0; i < maxEvil - evil; i++)
         {
             RoleInfo roleInfo = new RoleInfo();
-            roleInfo.SetRole(false, ERole.NORMAL);
+            roleInfo.SetRole(false, "신하");
             Role.roleList.Add(roleInfo);
         }
+        Debug.Log("완료");
     }
     #region 버튼
     public void NormalUpBtn(TMP_Text text)

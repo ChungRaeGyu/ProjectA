@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-public class RoleInfo :MonoBehaviour
+public class RoleInfo
 {
     public bool camp;
-    public ERole eRole;
-    public void SetRole(bool camp, ERole eRole)
+    public string name;
+    public void SetRole(bool camp, string name)
     {
         this.camp = camp;
-        this.eRole = eRole;
+        this.name = name;
     }
 }
 

@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    //닉네임
+    //캐릭터 머리 돌아가는거
+
     PhotonView pv;
     [SerializeField] TextMesh nickName;
     private void Awake()
