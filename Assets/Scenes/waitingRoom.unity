@@ -4116,6 +4116,7 @@ MonoBehaviour:
   roomNameTxt: {fileID: 1977181317}
   playerCountTxt: {fileID: 1151661444}
   gameStartBtn: {fileID: 1927837057}
+  gameSettingBtn: {fileID: 1052053455}
   guidePanel: {fileID: 786305397}
   roomSettingManager: {fileID: 1586886485}
 --- !u!114 &951899833
@@ -4812,7 +4813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1052053456
 RectTransform:
   m_ObjectHideFlags: 0

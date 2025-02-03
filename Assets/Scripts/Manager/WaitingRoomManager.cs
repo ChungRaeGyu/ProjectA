@@ -15,6 +15,7 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text roomNameTxt;
     [SerializeField] TMP_Text playerCountTxt;
     [SerializeField] GameObject gameStartBtn;
+    [SerializeField] GameObject gameSettingBtn;
     [SerializeField] GameObject guidePanel;
     PhotonView pv;
 
@@ -34,6 +35,7 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
         {
             //마스터 클라이언트가 방장임
             gameStartBtn.SetActive(true);
+            gameSettingBtn.SetActive(true);
         }
     }
     [PunRPC]

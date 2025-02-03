@@ -29,6 +29,8 @@ public class RoomSettingManager : MonoBehaviour
     int maxGood;
     int evil=1;
     int maxEvil;
+    int goodNormal = 0;
+    int evilNormal = 0;
     public static int[] list;
 
     public void UpdateCount(int count)
@@ -119,13 +121,13 @@ public class RoomSettingManager : MonoBehaviour
                 Role.roleList.Add(roleInfo);
             }
         }
-        for(int i=0; i <maxGood - good; i++)
+        for(int i=0; i <goodNormal; i++)
         {
             RoleInfo roleInfo = new RoleInfo();
             roleInfo.SetRole(true, "重馬");
             Role.roleList.Add(roleInfo);
         }
-        for (int i = 0; i < maxEvil - evil; i++)
+        for (int i = 0; i <evilNormal; i++)
         {
             RoleInfo roleInfo = new RoleInfo();
             roleInfo.SetRole(false, "重馬");
@@ -137,10 +139,16 @@ public class RoomSettingManager : MonoBehaviour
     public void NormalUpBtn(TMP_Text text)
     {
         int temp = int.Parse(text.text);
-        if(text.CompareTag("Good"))
+        if (text.CompareTag("Good"))
+        {
             good++;
+            goodNormal++;
+        }
         else
+        {
             evil++;
+            evilNormal++;
+        }
         text.text = (temp+1).ToString();
         UpdateCount();
     }
@@ -149,9 +157,15 @@ public class RoomSettingManager : MonoBehaviour
         int temp = int.Parse(text.text);
         if (temp == 0) return;
         if (text.CompareTag("Good"))
+        {
             good--;
+            goodNormal--;
+        }
         else
+        {
             evil--;
+            evilNormal--;
+        }
         text.text = (temp-1).ToString();
         UpdateCount();
     }

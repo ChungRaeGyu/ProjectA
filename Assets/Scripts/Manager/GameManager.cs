@@ -54,16 +54,17 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         roomNameTxt.text = $"방 이름 : {PhotonNetwork.CurrentRoom.Name}";
     }
-    #region 자리지정및역할배정
-    private static void RoleAllocationing()
-    {
-        PhotonHashTable tempHash = new PhotonHashTable();
-        foreach (Player player in PhotonNetwork.PlayerList)
-        {
-            //역할배정
-            int rand = Random.Range(0, Role.roleList.Count);
 
-            tempHash.Add(Role.roleList[rand], player.ActorNumber); //중복 체크 필요
+
+    #region 자리지정및역할배정
+    private void RoleAllocationing()
+    {
+        Role.SuffleRole();
+        PhotonHashTable tempHash = new PhotonHashTable();
+        var playerList = PhotonNetwork.PlayerList;
+        for(int i=0; i < playerList.Count(); i++)
+        {
+            tempHash.Add(Role.roleList[i], playerList[i].ActorNumber);
         }
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(tempHash);
