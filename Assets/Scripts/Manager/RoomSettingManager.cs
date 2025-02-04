@@ -7,16 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-public enum ERole
-{
-    MERIN,
-    PERCIVAL,
-    MORGANA,
-    MORDRED,
-    ASSASSIN,
-    OBERON,
-    NORMAL
-}
+
 public class RoomSettingManager : MonoBehaviour
 {
     [SerializeField] TMP_Text goodTxt;

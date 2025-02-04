@@ -9,6 +9,7 @@ public class PlayerScript : MonoBehaviour
 
     PhotonView pv;
     [SerializeField] TextMesh nickName;
+    public RoleInfo roleInfo;
     private void Awake()
     {
         pv = GetComponent<PhotonView>();

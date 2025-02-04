@@ -6,15 +6,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using PhotonHashTable = ExitGames.Client.Photon.Hashtable;
-public enum Stage{
-    READY,
-    START,
-    EXPEDITIONCHOICE,
-    VOTING,
-    EXPEDITIONRESULT,
-    FINDKING,
-    ENDGIN
-}
+
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -24,12 +16,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] TMP_Text roomNameTxt;
     //PlayerObject
     GameObject character; //게임오브젝트와 닉네임 관리를 위한
+    PlayerScript playerScript;
     //Ready
     [SerializeField] Transform[] seats; //자리의 위치를 가지고 있다.
     Dictionary<int, int> seatNum = new Dictionary<int, int>();  //자리 위치, 플레이어actnum
     //Role
-    PhotonHashTable roleAllocation = new PhotonHashTable();
-    RoleInfo myRole;
+    Dictionary<RoleInfo,int> roleAllocation = new Dictionary<RoleInfo, int>();
     [SerializeField] List<int> turnList = new List<int>();
     private void Awake()
     {
@@ -46,8 +38,8 @@ public class GameManager : MonoBehaviourPunCallbacks
                 actNumList.Add(player.ActorNumber);
             }
             ListSort(turnList);
-            RoleAllocationing();
             pv.RPC("SeatTurnList", RpcTarget.AllBuffered, turnList.ToArray(),randomList.ToArray(),actNumList.ToArray());
+            RoleAllocationing();
         }
     }
     void Start()
@@ -59,19 +51,30 @@ public class GameManager : MonoBehaviourPunCallbacks
     #region 자리지정및역할배정
     private void RoleAllocationing()
     {
+        //얘는 마스터클라이언트만진행
         Role.SuffleRole();
-        PhotonHashTable tempHash = new PhotonHashTable();
         var playerList = PhotonNetwork.PlayerList;
         for(int i=0; i < playerList.Count(); i++)
         {
-            tempHash.Add(Role.roleList[i], playerList[i].ActorNumber);
+            roleAllocation.Add(Role.roleList[i], playerList[i].ActorNumber);
+            pv.RPC("RoleSharing", playerList[i], Role.roleList[i].camp, Role.roleList[i].name);
         }
 
-        PhotonNetwork.CurrentRoom.SetCustomProperties(tempHash);
+    }
+    [PunRPC]
+    private void RoleSharing(bool camp, string name)
+    {
+        //해당되는 플레이어만
+        Debug.Log(name);
+        playerScript.roleInfo.SetRole(camp, name);
+        Debug.Log("직업 보여 주기");
+
     }
     [PunRPC]
     private void SeatTurnList(int[] tempList, int[] random, int[] actorNum)
     {
+        //모두
+
         //Awake에 사용되는 중
         turnList = tempList.ToList();
         for(int i=0; i<random.Length; i++)
@@ -80,12 +83,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     private void Seating()
     {
+        //모두
+
         object[] customData = new object[] { PhotonNetwork.LocalPlayer.NickName};
-        GameObject tempObj = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
+        character = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
         int num = seatNum.FirstOrDefault(x => x.Value == PhotonNetwork.LocalPlayer.ActorNumber).Key;
-        tempObj.transform.position = seats[num].position;
-        
-        
+        character.transform.position = seats[num].position;
+        playerScript = character.GetComponent<PlayerScript>();
+
         // 여기서 부터 게임 시작
         StartCoroutine(CGameProgress());
     }
@@ -139,24 +144,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator CGameProgress()
     {
+        //모두
         //자기 역할 확인하기
-        CheckRole();
         yield return null;
-    }
-
-    private void CheckRole()
-    {
-        pv.RPC("CheckMyRole", RpcTarget.AllBuffered);
-    }
-
-
-
-    [PunRPC]
-    private void CheckMyRole()
-    {
-        roleAllocation = PhotonNetwork.CurrentRoom.CustomProperties;
-        myRole = (RoleInfo)roleAllocation.FirstOrDefault(x => (int)x.Value==PhotonNetwork.LocalPlayer.ActorNumber).Key;
-        Debug.Log(myRole.name);
-        //각자의 역할을 가진 뭐 카드 같은거 띄워주기
     }
 }
