@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     PhotonView pv;
     //UI
     [SerializeField] TMP_Text roomNameTxt;
+    [SerializeField] RolePanel rolePanel;
     //PlayerObject
     GameObject character; //게임오브젝트와 닉네임 관리를 위한
     PlayerScript playerScript;
@@ -45,31 +46,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         //state으로 처리하자
         StartCoroutine(CGameProgress());
     }
-
-
-    #region 자리지정및역할배정
-    private void RoleAllocationing()
-    {
-        //얘는 마스터클라이언트만진행
-        Role.SuffleRole();
-        var playerList = PhotonNetwork.PlayerList;
-        for(int i=0; i < playerList.Count(); i++)
-        {
-            roleAllocation.Add(Role.roleList[i], playerList[i].ActorNumber);
-            pv.RPC("RoleSharing", playerList[i], Role.roleList[i].camp, Role.roleList[i].name);
-        }
-
-    }
-    [PunRPC]
-    private void RoleSharing(bool camp, string name)
-    {
-        //해당되는 플레이어만
-        Debug.Log(name);
-        playerScript.roleInfo.SetRole(camp, name);
-        Debug.Log("직업 보여 주기");
-
-    }
-
+    #region 자리정리 및 랜덤값 기능
     private int RandomNum(Dictionary<int,int> tempDic)
     {
         int rand;
@@ -145,10 +122,11 @@ public class GameManager : MonoBehaviourPunCallbacks
                 pv.RPC("SeatTurnList", player,random);
             }
             ListSort(turnList);
-            //RoleAllocationing();
+            RoleAllocationing();
         }
         yield return null;
     }
+    #region 자리배정
     [PunRPC]
     private void SeatTurnList(int rand)
     {
@@ -163,4 +141,29 @@ public class GameManager : MonoBehaviourPunCallbacks
         character.transform.position = seats[rand].position;
         playerScript = character.GetComponent<PlayerScript>();
     }
+    #endregion
+
+    #region 역할배정
+    private void RoleAllocationing()
+    {
+        //얘는 마스터클라이언트만진행
+        Role.SuffleRole();
+        var playerList = PhotonNetwork.PlayerList;
+        for (int i = 0; i < playerList.Count(); i++)
+        {
+            roleAllocation.Add(Role.roleList[i], playerList[i].ActorNumber);
+            pv.RPC("RoleSharing", playerList[i], Role.roleList[i].camp, Role.roleList[i].name);
+        }
+    }
+    [PunRPC]
+    private void RoleSharing(bool camp, string name)
+    {
+        //해당되는 플레이어만
+        Debug.Log(name);
+        playerScript.roleInfo.SetRole(camp, name);
+
+        rolePanel.SetRolePanel(playerScript.roleInfo);
+        rolePanel.OpenBtn();
+    }
+    #endregion
 }

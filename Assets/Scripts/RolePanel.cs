@@ -11,7 +11,7 @@ public class RolePanel : MonoBehaviour
     public void SetRolePanel(RoleInfo roleInfo)
     {
         roleText.text = roleInfo.name;
-        teamText.text = roleInfo.camp ? "악 세력" : "선 세력";
+        teamText.text = roleInfo.camp ? "선 세력" : "악 세력";
     }
     public void CloseBtn()
     {
