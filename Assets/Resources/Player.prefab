@@ -148,6 +148,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nickName: {fileID: 5133232350615487981}
+  roleInfo:
+    camp: 0
+    name: 
 --- !u!114 &3091259378160698737
 MonoBehaviour:
   m_ObjectHideFlags: 0

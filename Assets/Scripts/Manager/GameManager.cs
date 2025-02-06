@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using PhotonHashTable = ExitGames.Client.Photon.Hashtable;
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     //Ready
     [SerializeField] Transform[] seats; //자리의 위치를 가지고 있다.
     Dictionary<int, int> seatNum = new Dictionary<int, int>();  //자리 위치, 플레이어actnum
+    int allReady = 0;
     //Role
     Dictionary<RoleInfo,int> roleAllocation = new Dictionary<RoleInfo, int>();
     [SerializeField] List<int> turnList = new List<int>();
@@ -107,6 +109,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                     break;
 
             }
+            Debug.Log("종료");
             break;
         }
     }
@@ -124,8 +127,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             ListSort(turnList);
             RoleAllocationing();
         }
-        yield return null;
+        yield return new WaitUntil(()=> allReady==PhotonNetwork.CurrentRoom.PlayerCount);
     }
+
     #region 자리배정
     [PunRPC]
     private void SeatTurnList(int rand)
@@ -164,6 +168,16 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         rolePanel.SetRolePanel(playerScript.roleInfo);
         rolePanel.OpenBtn();
+    }
+
+    public void checkRole()
+    {
+        pv.RPC("PCheckRole", PhotonNetwork.MasterClient);
+    }
+    [PunRPC]
+    private void PCheckRole()
+    {
+        allReady++;
     }
     #endregion
 }
