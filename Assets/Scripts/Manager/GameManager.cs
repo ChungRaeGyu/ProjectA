@@ -10,7 +10,8 @@ using PhotonHashTable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-
+    public static GameManager instance;
+    private EGameState currentState;
     PhotonView pv;
     //UI
     [SerializeField] TMP_Text roomNameTxt;
@@ -25,7 +26,19 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] List<int> turnList = new List<int>();
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(instance);
+        }
+
+
         pv = GetComponent<PhotonView>();
+        currentState = EGameState.READY;
+
         if (PhotonNetwork.IsMasterClient)
         {
             List<int> randomList = new List<int>();
@@ -45,6 +58,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Start()
     {
         roomNameTxt.text = $"방 이름 : {PhotonNetwork.CurrentRoom.Name}";
+        //state으로 처리하자
+        StartCoroutine(CGameProgress());
     }
 
 
@@ -144,8 +159,16 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator CGameProgress()
     {
-        //모두
-        //자기 역할 확인하기
-        yield return null;
+        while (true)
+        {
+            Debug.Log("게임 진행 중 ");
+            switch (currentState)
+            {
+                case EGameState.READY:
+                    
+                    break;
+
+            }
+        }
     }
 }

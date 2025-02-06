@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum EStage
+public enum EGameState
 {
     READY,
     START,
