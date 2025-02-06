@@ -38,22 +38,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         pv = GetComponent<PhotonView>();
         currentState = EGameState.READY;
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            List<int> randomList = new List<int>();
-            List<int> actNumList = new List<int>();
-            foreach (Player player in PhotonNetwork.PlayerList)
-            {
-                int random = RandomNum(randomList);
-                turnList.Add(random);
-                randomList.Add(random);
-                actNumList.Add(player.ActorNumber);
-            }
-            ListSort(turnList);
-            pv.RPC("SeatTurnList", RpcTarget.AllBuffered, turnList.ToArray(),randomList.ToArray(),actNumList.ToArray());
-            RoleAllocationing();
-        }
     }
     void Start()
     {
@@ -85,37 +69,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log("직업 보여 주기");
 
     }
-    [PunRPC]
-    private void SeatTurnList(int[] tempList, int[] random, int[] actorNum)
-    {
-        //모두
 
-        //Awake에 사용되는 중
-        turnList = tempList.ToList();
-        for(int i=0; i<random.Length; i++)
-            seatNum.Add(random[i],actorNum[i]);
-        Seating();
-    }
-    private void Seating()
-    {
-        //모두
-
-        object[] customData = new object[] { PhotonNetwork.LocalPlayer.NickName};
-        character = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
-        int num = seatNum.FirstOrDefault(x => x.Value == PhotonNetwork.LocalPlayer.ActorNumber).Key;
-        character.transform.position = seats[num].position;
-        playerScript = character.GetComponent<PlayerScript>();
-
-        // 여기서 부터 게임 시작
-        StartCoroutine(CGameProgress());
-    }
-    private int RandomNum(List<int> tempList)
+    private int RandomNum(Dictionary<int,int> tempDic)
     {
         int rand;
         do
         {
             rand = Random.Range(0, seats.Length);
-        } while (tempList.Contains(rand));
+        } while (tempDic.ContainsKey(rand));
 
         return rand;
         //Todo: seatNum에 넣어준다. 그리고 저 정보들을 끝나고 한대 모은다?
@@ -165,10 +126,41 @@ public class GameManager : MonoBehaviourPunCallbacks
             switch (currentState)
             {
                 case EGameState.READY:
-                    
+                    yield return StartCoroutine(CReady());
                     break;
 
             }
+            break;
         }
+    }
+    IEnumerator CReady()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            foreach (Player player in PhotonNetwork.PlayerList)
+            {
+                int random = RandomNum(seatNum);
+                turnList.Add(random);
+                seatNum.Add(random, player.ActorNumber);
+                pv.RPC("SeatTurnList", player,random);
+            }
+            ListSort(turnList);
+            //RoleAllocationing();
+        }
+        yield return null;
+    }
+    [PunRPC]
+    private void SeatTurnList(int rand)
+    {
+        //모두
+        Seating(rand);
+    }
+    private void Seating(int rand)
+    {
+        //모두
+        object[] customData = new object[] { PhotonNetwork.LocalPlayer.NickName };
+        character = PhotonNetwork.Instantiate("Player", Vector3.zero, Quaternion.identity, 0, customData);
+        character.transform.position = seats[rand].position;
+        playerScript = character.GetComponent<PlayerScript>();
     }
 }
