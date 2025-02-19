@@ -3,10 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using PhotonHashTable = ExitGames.Client.Photon.Hashtable;
 
 
 public class GameManager : MonoBehaviourPunCallbacks
@@ -15,18 +12,20 @@ public class GameManager : MonoBehaviourPunCallbacks
     private EGameState currentState;
     PhotonView pv;
     //UI
-    [SerializeField] TMP_Text roomNameTxt;
-    [SerializeField] RolePanel rolePanel;
+    RoomUImanager roomUImanager;
     //PlayerObject
     GameObject character; //게임오브젝트와 닉네임 관리를 위한
     PlayerScript playerScript;
     //Ready
     [SerializeField] Transform[] seats; //자리의 위치를 가지고 있다.
-    Dictionary<int, int> seatNum = new Dictionary<int, int>();  //자리 위치, 플레이어actnum
+    public Dictionary<int, Player> seatNum = new Dictionary<int, Player>();  //자리 위치, 플레이어actnum
     int allReady = 0;
     //Role
     Dictionary<RoleInfo,int> roleAllocation = new Dictionary<RoleInfo, int>();
     [SerializeField] List<int> turnList = new List<int>();
+    //Expedition
+    public ChoiceCrewPanel choiceCrewPanel;
+    int turnCount = -1;
     private void Awake()
     {
         if (instance == null)
@@ -44,12 +43,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-        roomNameTxt.text = $"방 이름 : {PhotonNetwork.CurrentRoom.Name}";
         //state으로 처리하자
-        StartCoroutine(CGameProgress());
+        if(PhotonNetwork.IsMasterClient)
+            StartCoroutine(CGameProgress());
     }
     #region 자리정리 및 랜덤값 기능
-    private int RandomNum(Dictionary<int,int> tempDic)
+    private int RandomNum(Dictionary<int,Player> tempDic)
     {
         int rand;
         do
@@ -107,12 +106,44 @@ public class GameManager : MonoBehaviourPunCallbacks
                 case EGameState.READY:
                     yield return StartCoroutine(CReady());
                     break;
-
+                case EGameState.EXPEDITIONCHOICE:
+                    yield return StartCoroutine(CExpedition());
+                    break;
             }
             Debug.Log("종료");
             break;
         }
     }
+    #region CExepedition
+    IEnumerator CExpedition()
+    {
+        //여기서 그러면 첫번쨰 할일 그 첫번째 원정대장 정하기
+        if (turnCount == -1)
+            turnCount = Random.Range(0, PhotonNetwork.CurrentRoom.PlayerCount);
+        else
+        {
+            turnCount++;
+            if (turnCount >= PhotonNetwork.CurrentRoom.PlayerCount)
+                turnCount = 0;
+        }
+
+        pv.RPC("ChoiceCrew", seatNum[turnList[turnCount]]);
+
+        
+        //그리고 원정대원 뽑기 
+        yield return null;
+    }
+    [PunRPC]
+    private void ChoiceCrew()
+    {
+        //원정대장에게 대원 선택할 수 있는 창을 준다. 버튼 만들어 주기
+        roomUImanager.ChoiceBtnActiveControl(true);
+
+
+    }
+
+    #endregion
+    #region CReady
     IEnumerator CReady()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -121,7 +152,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 int random = RandomNum(seatNum);
                 turnList.Add(random);
-                seatNum.Add(random, player.ActorNumber);
+                seatNum.Add(random, player);
                 pv.RPC("SeatTurnList", player,random);
             }
             ListSort(turnList);
@@ -166,8 +197,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         Debug.Log(name);
         playerScript.roleInfo.SetRole(camp, name);
 
-        rolePanel.SetRolePanel(playerScript.roleInfo);
-        rolePanel.OpenBtn();
+        roomUImanager.RoleSharing(playerScript.roleInfo);
     }
 
     public void checkRole()
@@ -179,5 +209,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         allReady++;
     }
+    #endregion
     #endregion
 }

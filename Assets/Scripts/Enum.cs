@@ -3,7 +3,6 @@ using UnityEngine;
 public enum EGameState
 {
     READY,
-    START,
     EXPEDITIONCHOICE,
     VOTING,
     EXPEDITIONRESULT,

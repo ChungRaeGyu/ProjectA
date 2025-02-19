@@ -17,7 +17,6 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         nickName.text = (string)pv.InstantiationData[0];
-        //nickName.text = PhotonNetwork.LocalPlayer.NickName;
     }
 
     public void NickNameSet(string name)
