@@ -74,7 +74,7 @@ public class WaitingRoomManager : MonoBehaviourPunCallbacks
     public void GameStartBtn()
     {
         //게임시작버튼
-        if (true/*roomSettingManager.JobCount()*/)
+        if (roomSettingManager.JobCount())
         {
             roomSettingManager.SetJob();
             PhotonNetwork.LoadLevel("Room");

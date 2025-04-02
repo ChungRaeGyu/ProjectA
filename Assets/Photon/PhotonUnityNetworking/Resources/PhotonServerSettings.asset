@@ -50,6 +50,11 @@ MonoBehaviour:
   - RoleSharing
   - PCheckRole
   - ChoiceCrew
+  - SeatShare
+  - VotingAction
+  - SetBool
+  - ExpeditionVot
+  - PAllReady
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

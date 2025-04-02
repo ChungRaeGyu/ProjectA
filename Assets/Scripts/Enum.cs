@@ -3,8 +3,9 @@ using UnityEngine;
 public enum EGameState
 {
     READY,
-    EXPEDITIONCHOICE,
+    ChoiceEXPEDITION,
     VOTING,
+    EXPEDITIONVOTING,
     EXPEDITIONRESULT,
     FINDKING,
     ENDGIN

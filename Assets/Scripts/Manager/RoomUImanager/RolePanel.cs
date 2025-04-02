@@ -17,7 +17,7 @@ public class RolePanel : MonoBehaviour
     {
         if (check)
         {
-            GameManager.instance.checkRole();
+            GameManager.instance.AllReady();
             check = false;
         }
         gameObject.SetActive(false);
